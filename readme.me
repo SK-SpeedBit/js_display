@@ -1,0 +1,312 @@
+
+
+    ------------------------   js_display  ----------------------------
+      (c) 2019 SpeedBit, reg. Czestochowa, Poland 
+    --------------------------------------------------------------------
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Contents:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  0. Revision
+  1. The js_display class - short description
+  2. Structure of js_display class
+  3. Description of the js_display class
+  4. Properties of the js_display class 
+  5. The minimum html file needed to run the graph - example
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  0. Revision
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  1.0  21-03-2019  First release
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  1. The js_display class - short description
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+A simple 7-segment display. In a beautiful antique style.
+- displays numbers and some characters as a string
+- you can create a display with any number of digits
+- has the ability to set multiple colors (default green)
+- automatic calculation of dimensions based on the specified character height
+- in the case of a screen overflow, "E" is displayed by default in red in the first element
+- maximum simplified display setting
+- an example in HTML
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  2. Structure of js_display class
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ------------------------------- one display --------------------------------------
+class js_d7 {
+  constructor (container, hsize, oncol, ovrcol, backcol)     // initialize one display (ovrcol & backcol are optional)
+  dimm(rgba, div)                                            // dimmer for off color (rgba, divider)
+  ovr_alarm()                                                // draw alarm on display ('E' and red color - default)
+  draw_segm(a, b, c, d, e, f, g, p)                          // draw pure segments 
+  draw(num, p)                                               // draw this display (digit_or_char, point_bool)
+  redraw()                                                   // redraw this display
+  clear()                                                    // clear this display
+}
+// ------------------------------- /one display --------------------------------------
+
+
+// ------------------------------- all display --------------------------------------
+class js_display {
+  constructor (container, cnt, size, oncol, ovrcol, backcol) // initialize all display (ovrcol & backcol are optional)
+  color(oncol, ovrcol, backcol)                              // color change for all display (ovrcol & backcol are optional)
+  clear()                                                    // clear all display
+  draw_num(num, p)                                           // draw fixed-point number (number, point_position)
+  draw(num)                                                  // draw any number (not formated)
+  draw_str(s)                                                // draw raw string (without any control)
+  redraw()                                                   // redraw all display
+}
+// ------------------------------- /all display --------------------------------------
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 3. Description of the js_display class
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //--------------------------------------------------------------------------
+  //  constructor( container, cnt, size, oncol, ovrcol, backcol) 
+  //--------------------------------------------------------------------------
+      Initializes all display parameters, sets the colors
+      ------------------------------------------------------
+            parameter 1: container (html)
+            ------------------------------
+                              Display container. Enter the id of the created container, which will be the parent of the display. 
+                              Parameters such as location and dimensions can be set directly in the html code.
+                              The location of the display is the same as the container. The dimensions are calculated from parameters.
+
+            parameter 2: cnt
+            ------------------------------
+                              Number of digits of display
+
+            parameter 3: size
+            ------------------------------
+                              Hight of display (px)
+
+            parameter 4: oncol (optional)
+            ------------------------------
+                              Color of the bright display segments
+                              The color of the dark segments of the display is calculated by dividing 
+                              the color value of the bright segments by the parameter "dimdiv"
+                              Color is given as string: "rgba(r, g, b, a)", where r is red value, g is green value, b is blue value, a is alpha value
+                              
+            parameter 5: ovrcol (optional)
+            ------------------------------
+                              Color of the bright display segments for the alarm mode (overflow)
+                              Color is given as string: "rgba(r, g, b, a)", where r is red value, g is green value, b is blue value, a is alpha value
+            
+            parameter 6: backcol (optional)
+            ------------------------------
+                              Color of the display background  
+                              Color is given as string: "rgba(r, g, b, a)", where r is red value, g is green value, b is blue value, a is alpha value
+                 
+
+
+  //--------------------------------------------------------------------------
+  //  color(oncol, ovrcol, backcol)
+  //--------------------------------------------------------------------------
+      Color change for all display (ovrcol & backcol are optional)
+      ------------------------------------------------------
+            parameter 1: oncol
+            ------------------------------
+                              Color of the bright display segments
+                              The color of the dark segments of the display is calculated by dividing 
+                              the color value of the bright segments by the parameter "dimdiv"
+                              Color is given as string: "rgba(r, g, b, a)", where r is red value, g is green value, b is blue value, a is alpha value
+                              
+            parameter 2: ovrcol (optional)
+            ------------------------------
+                              Color of the bright display segments for the alarm mode (overflow)
+                              Color is given as string: "rgba(r, g, b, a)", where r is red value, g is green value, b is blue value, a is alpha value
+            
+            parameter 3: backcol (optional)
+            ------------------------------
+                              Color of the display background  
+                              Color is given as string: "rgba(r, g, b, a)", where r is red value, g is green value, b is blue value, a is alpha value
+
+
+
+  //--------------------------------------------------------------------------
+  //  clear()
+  //--------------------------------------------------------------------------
+      Clear all display
+      ------------------------------------------------------
+
+
+
+  //--------------------------------------------------------------------------
+  //  draw_num(num, p)
+  //--------------------------------------------------------------------------
+      Draw fixed-point number (number, point_position). Prefered for numbers.
+      ------------------------------------------------------
+            parameter 1: num
+            ------------------------------
+                              Number to draw. 
+                              
+            parameter 2: p
+            ------------------------------
+                              Position of point on display
+
+
+  //--------------------------------------------------------------------------
+  //  draw(num)
+  //--------------------------------------------------------------------------
+      Draw any number (not formated)
+      ------------------------------------------------------
+            parameter 1: num
+            ------------------------------
+                              Number or string to draw. Format is not performed.
+
+
+  //--------------------------------------------------------------------------
+  //  draw_str(s)
+  //--------------------------------------------------------------------------
+      Draw raw string (without any control) Prefered for strings.
+      ------------------------------------------------------
+            parameter 1: s
+            ------------------------------
+                              String to draw.
+
+  //--------------------------------------------------------------------------
+  //  redraw()
+  //--------------------------------------------------------------------------
+      Redraw all display
+      ------------------------------------------------------
+             
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 4. Properties of the js_display class - short description:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+There is no need to set parameters. The ones given in the constructor are sufficient.
+The required parameters are automatically calculated.
+But if someone wants to change something ...
+
+  ----------------------------------------------------------------------------------------------------------------------------------------
+    name              |  description                                                           | default value
+  ----------------------------------------------------------------------------------------------------------------------------------------
+    marg              |  margin of display                                                     |  0
+    dimdiv            |  color divider for calculate off color                                 |  4
+    prop              |  proportions of display                                                |  12/17
+    sang              |  angle of display                                                      |  8
+    sw                |  segment width                                                         |  6
+    sm                |  segment margin                                                        |  sw / 2
+    backcol           |  display bacground color                                               |  black
+    oncol             |  segment on color (off color is auto calculated with property: dimdiv) |  green
+    ovrcol            |  overflow error color                                                  |  red
+  ----------------------------------------------------------------------------------------------------------------------------------------
+    // Internal 
+    offcol            |  segment off color (auto calculated)                                   |  dimm(oncol, dimdiv)
+  ----------------------------------------------------------------------------------------------------------------------------------------
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 5. The minimum html file needed to run the display - example
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>JavaScript 7-segment Display by SpeedBit (c)</title>
+    <style>body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; } </style>
+    <!-- load script file -->
+    <script type="text/javascript" src="js_display.js"></script>
+  </head>
+  
+  <script>
+    var container1 = "dpl1";
+    var container2 = "dpl2";
+    var container3 = "dpl3";
+    var container4 = "dpl4";
+    var container5 = "dpl5";
+  </script>
+  
+  <body>
+  
+    <h3><center>js_display by the SpeedBit</h3>
+    
+    <script>
+      // make container for display
+      document.write("<br><center><div id='" + container1 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
+      document.write("<br><center><div id='" + container2 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
+      document.write("<br><center><div id='" + container3 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
+      document.write("<br><center><div id='" + container4 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
+      document.write("<br><center><div id='" + container5 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
+      var dpl1 = new js_display(container1, 15,  60, "green" );
+      var dpl2 = new js_display(container2,  5, 120, "cyan"  );
+      var dpl3 = new js_display(container3,  8,  30, "red"   );
+      var dpl4 = new js_display(container4,  7,  40, "blue"  );
+      var dpl5 = new js_display(container5, 10,  50, "yellow");
+      var num = -500;
+
+      interval= setInterval(function() {
+                    num++;
+                    dpl1.draw_num(num /1, 2); 
+                    dpl2.draw_num((500-num) /10, 2); 
+                    dpl3.draw("Enjoy! "     ); 
+                    dpl4.draw_str("7-seg"   ); 
+                    dpl5.draw_str("Display!"); 
+                    
+                    if ((num>=100) && (num<150)) dpl1.draw_str("hello"         );
+                    if ((num>=150) && (num<200)) dpl1.draw_str("it is..."      );
+                    if ((num>=200) && (num<250)) dpl1.draw_str("7-seg display!");
+                    if ((num>=250) && (num<400)) dpl1.draw_str("display!!!"    );
+                    
+                    if (num==100) dpl1.color("cyan"  );
+                    if (num==200) dpl1.color("blue"  );
+                    if (num==300) dpl1.color("yellow");
+                    if (num==400) dpl1.color("red"   );
+                    if (num==500) dpl1.color("green" );
+                    
+                  }, 10);    
+    </script>
+
+    <p><center>Enjoy :-) </p>
+
+  </body>
+</html>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

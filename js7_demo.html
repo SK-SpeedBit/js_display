@@ -26,27 +26,27 @@
       document.write("<br><center><div id='" + container3 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
       document.write("<br><center><div id='" + container4 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
       document.write("<br><center><div id='" + container5 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
-      var dpl1 = new js_display(container1, 15, 60, "green");
-      var dpl2 = new js_display(container2, 5, 120, "cyan");
-      var dpl3 = new js_display(container3, 8, 30, "red");
-      var dpl4 = new js_display(container4, 7, 40, "blue");
-      var dpl5 = new js_display(container5, 10, 50, "yellow");
+      var dpl1 = new js_display(container1, 15,  60, "green" );
+      var dpl2 = new js_display(container2,  5, 120, "cyan"  );
+      var dpl3 = new js_display(container3,  8,  30, "red"   );
+      var dpl4 = new js_display(container4,  7,  40, "blue"  );
+      var dpl5 = new js_display(container5, 10,  50, "yellow");
       var num = -500;
 
       interval= setInterval(function() {
                     num++;
                     dpl1.draw_num(num /1, 2); 
                     dpl2.draw_num((500-num) /10, 2); 
-                    dpl3.draw("Enjoy! "); 
-                    dpl4.draw_str("7-seg"); 
+                    dpl3.draw("Enjoy! "     ); 
+                    dpl4.draw_str("7-seg"   ); 
                     dpl5.draw_str("Display!"); 
                     
-                    if ((num>=100) && (num<150)) dpl1.draw_str("hello");
-                    if ((num>=150) && (num<200)) dpl1.draw_str("there it's");
+                    if ((num>=100) && (num<150)) dpl1.draw_str("hello"         );
+                    if ((num>=150) && (num<200)) dpl1.draw_str("it is..."      );
                     if ((num>=200) && (num<250)) dpl1.draw_str("7-seg display!");
-                    if ((num>=250) && (num<400)) dpl1.draw_str("display!!!");
+                    if ((num>=250) && (num<400)) dpl1.draw_str("display!!!"    );
                     
-                    if (num==100) dpl1.color("cyan" );
+                    if (num==100) dpl1.color("cyan"  );
                     if (num==200) dpl1.color("blue"  );
                     if (num==300) dpl1.color("yellow");
                     if (num==400) dpl1.color("red"   );
