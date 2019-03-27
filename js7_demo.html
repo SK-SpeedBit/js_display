@@ -13,6 +13,7 @@
     var container3 = "dpl3";
     var container4 = "dpl4";
     var container5 = "dpl5";
+    var container6 = "dpl6";
   </script>
   
   <body>
@@ -26,13 +27,20 @@
       document.write("<br><center><div id='" + container3 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
       document.write("<br><center><div id='" + container4 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
       document.write("<br><center><div id='" + container5 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
+      document.write("<br><center><div id='" + container6 + "' style='background-color: #f0f0f0; width: 90%; height: 50%; position: relative'></div>");
       var dpl1 = new js_display(container1, 15,  60, "green" );
       var dpl2 = new js_display(container2,  5, 120, "cyan"  );
       var dpl3 = new js_display(container3,  8,  30, "red"   );
       var dpl4 = new js_display(container4,  7,  40, "blue"  );
       var dpl5 = new js_display(container5, 10,  50, "yellow");
+      var dpl6 = new js_display(container6,  1, 200, "green" );
       var num = -500;
 
+      dpl3.sang = 0;
+      dpl4.sang = 12;
+      dpl5.sang = 5;
+      dpl6.sang = 1;
+     
       interval= setInterval(function() {
                     num++;
                     dpl1.draw_num(num /1, 2); 
@@ -40,6 +48,13 @@
                     dpl3.draw("Enjoy! "     ); 
                     dpl4.draw_str("7-seg"   ); 
                     dpl5.draw_str("Display!"); 
+                    
+                    dpl1.sang = Math.abs(num % 100 / 10);
+                    dpl6.sang = Math.abs(num % 100 / 10);
+                    if (num.toString()[2]<5)
+                      dpl6.draw(num.toString()[2]+"." ); 
+                    else
+                      dpl6.draw(num.toString()[2]); 
                     
                     if ((num>=100) && (num<150)) dpl1.draw_str("hello"         );
                     if ((num>=150) && (num<200)) dpl1.draw_str("it is..."      );

@@ -27,14 +27,17 @@ class js_d7 {
   set width (w) { this.iwidth  = w; this.iheight = w / this.prop; this.int_init(); }
   set height(h) { this.iheight = h; this.iwidth  = h * this.prop; this.int_init(); }
   set oncol (c) { this.ioncol  = c; this.offcol  = this.dimm(this.oncol, this.dimdiv); }
+  set sang  (a) { this.isang=a; this.redraw(); }
+  get sang  ()  { return this.isang; }
   
   constructor (container, hsize, oncol, ovrcol, backcol) {
     this.marg   =  0;  // margin of display
-    this.dimdiv =  4;
+    this.dimdiv =  6;
     this.prop = 12/17; // proportions of display
-    this.sang =  8;    // angle of display
+    this.isang=  8;    // angle of display
     this.sw   =  6;    // segment width
     this.sm   =  this.sw / 2; //segment margin
+    this.pointspcorr = true;
     
     this.black   = "rgba(  0,   0,   0, 1)"; // std display acground color (const)
     this.green   = "rgba(  0, 255,   0, 1)"; // std segment color green (const)
@@ -62,11 +65,11 @@ class js_d7 {
     this.height  = hsize;
     
     this.dl = this.left  + this.marg;
-    this.dr = this.width - this.marg;
+    this.dr = this.width - this.marg - this.sm;
     this.dt = this.top   + this.marg;
     this.db = this.height- this.marg;
-    this.dv = this.height - 2 * this.marg;
-    this.dh = this.width  - 2 * this.marg;
+    this.dv = this.height- 2 * this.marg;
+    this.dh = this.width - 2 * this.marg;
 
     this.value = -1;    // value on display
     this.point = false; // point on display
@@ -85,7 +88,7 @@ class js_d7 {
     let ma = Math.atan(this.width / this.height) * 180 / Math.PI;
     this.sdivstop = ma/2;     // segment divider angle stop
 
-    this.sw = this.height / 12;
+    this.sw = this.height / 11;
     this.sdivw = this.sw / 2;
     this.sm    = this.sw / 2;
     
@@ -96,6 +99,15 @@ class js_d7 {
     this.ctx.rect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.stroke();
     this.ctx.fill();
+
+    if (this.pointspcorr) {
+      let nm = (this.db-this.dt) * Math.abs(Math.tan(this.sang * Math.PI / 180) ); 
+      if ( nm  < this.sm * 1.5) 
+        this.dr = this.width - this.marg - this.sm * 1.5 + nm;
+      else
+        this.dr = this.width - this.marg;
+    }
+    
   }
   
 
@@ -148,6 +160,13 @@ class js_d7 {
     let p14 = { x:0, y:0};
     let p15 = { x:0, y:0};
   
+    if (this.pointspcorr) {
+      let nm = (this.db-this.dt) * Math.abs(Math.tan(this.sang * Math.PI / 180) ); 
+      if ( nm  < this.sm * 1.5) 
+        this.dr = this.width - this.marg - this.sm * 1.5 + nm;
+      else
+        this.dr = this.width - this.marg;
+    }
     
     function drawline(pf, pt, state) {
       s.ctx.save();
@@ -255,7 +274,7 @@ class js_d7 {
     drawline(p13, p14, a);
     
     p15.y = p10.y;
-    p15.x = p8.x;
+    p15.x = p10.x + this.sw * 1.5;
     drawline(p15, p15, p);
     
     if (this.sang > this.sdivstop ) return;
@@ -374,7 +393,7 @@ class js_d7 {
       case  's': {a=1; b=0; c=1; d=1; e=0; f=1; g=1; break;}
       case  't': {a=1; b=0; c=0; d=0; e=1; f=1; g=0; break;}
       case  'u': {a=0; b=0; c=1; d=1; e=1; f=0; g=0; break;}
-      case  'y': {a=0; b=1; c=0; d=0; e=1; f=1; g=1; break;}
+      case  'y': {a=0; b=1; c=1; d=0; e=0; f=1; g=1; break;}
       case  '-': {a=0; b=0; c=0; d=0; e=0; f=0; g=1; break;}
       case  '=': {a=0; b=0; c=0; d=1; e=0; f=0; g=1; break;}
       case  '.' : {a=0; b=0; c=0; d=0; e=0; f=0; g=0; p=1; break;}
@@ -422,6 +441,14 @@ class js_display {
     if ((typeof this.tbl == "undefined") || (this.tbl.length == 0) ) return 0;
     return this.tbl[0].width * this.tbl.length; 
   }
+
+  set sang  (a) { 
+      this.isang = a; 
+      for (let i = 0; i < this.tbl.length; i++)  this.tbl[i].sang = this.isang;
+      this.redraw(); 
+    }
+  get sang  ()  { return this.isang; }
+
   
   getcolbyname(col){
     if (col.includes("rgb")) return col;
@@ -439,6 +466,7 @@ class js_display {
   }
 
   constructor (container, cnt, size, oncol, ovrcol, backcol) {
+    this.isang   = 8;
     this.black   = "rgba(  0,   0,   0, 1)"; // std display acground color (const)
     this.green   = "rgba(  0, 255,   0, 1)"; // std segment color green  (const)
     this.red     = "rgba(255,   0,   0, 1)"; // std segment color red    (const)
@@ -458,6 +486,7 @@ class js_display {
     // new all displays
     for (let i = 0; i < cnt; i++) {
       this.tbl[i] = new js_d7(container, size, oncol, ovrcol, backcol);
+      this.tbl[i].sang = this.isang;
       this.tbl[i].draw(-1, 0);
     }
     // set display size
