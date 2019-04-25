@@ -1,7 +1,8 @@
+/* jshint esversion: 6 */
 
 /*
     ------------------------   js_display  ----------------------------
-      (c) 2019 SpeedBit, reg. Czestochowa, Poland 
+      (c) 2019 SpeedBit, reg. Czestochowa, Poland
     --------------------------------------------------------------------
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ class js_d7 {
   set oncol (c) { this.ioncol  = c; this.offcol  = this.dimm(this.oncol, this.dimdiv); }
   set sang  (a) { this.isang=a; this.redraw(); }
   get sang  ()  { return this.isang; }
-  
+
   constructor (container, hsize, oncol, ovrcol, backcol) {
     this.marg   =  0;  // margin of display
     this.dimdiv =  6;
@@ -38,12 +39,12 @@ class js_d7 {
     this.sw   =  6;    // segment width
     this.sm   =  this.sw / 2; //segment margin
     this.pointspcorr = true;
-    
+
     this.black   = "rgba(  0,   0,   0, 1)"; // std display acground color (const)
     this.green   = "rgba(  0, 255,   0, 1)"; // std segment color green (const)
     this.red     = "rgba(255,   0,   0, 1)"; // std segment color red   (const)
     this.blue    = "rgba(  0, 150, 255, 1)"; // std segment color blue  (const)
-    
+
     this.backcol = this.black; // display bacground color
     this.oncol   = this.green; // segment on color (off color is auto calculated with property: dimdiv)
     this.ovrcol  = this.red;   // overflow error color
@@ -53,17 +54,17 @@ class js_d7 {
     if (typeof oncol   != "undefined") this.oncol   = oncol  ;
     if (typeof ovrcol  != "undefined") this.ovrcol  = ovrcol ;
     if (typeof backcol != "undefined") this.backcol = backcol;
-    
+
     this.offcol  = this.dimm(this.oncol, this.dimdiv); // segment off color (auto calculated)
- 
+
     this.canvas = document.createElement("canvas"); this.canvas.id = "canvas";
     document.getElementById(container).appendChild(this.canvas);
-    this.ctx    = this.canvas.getContext("2d"); 
+    this.ctx    = this.canvas.getContext("2d");
 
     this.left = 0;    // left position
     this.top  = 0;    // right position
     this.height  = hsize;
-    
+
     this.dl = this.left  + this.marg;
     this.dr = this.width - this.marg - this.sm;
     this.dt = this.top   + this.marg;
@@ -82,8 +83,8 @@ class js_d7 {
 
     this.int_init();
   }
-  
-  
+
+
   int_init () {
     let ma = Math.atan(this.width / this.height) * 180 / Math.PI;
     this.sdivstop = ma/2;     // segment divider angle stop
@@ -91,7 +92,7 @@ class js_d7 {
     this.sw = this.height / 11;
     this.sdivw = this.sw / 2;
     this.sm    = this.sw / 2;
-    
+
     this.ctx.canvas.width = this.width;
     this.ctx.canvas.height= this.height;
     // draw canvas fill
@@ -101,18 +102,18 @@ class js_d7 {
     this.ctx.fill();
 
     if (this.pointspcorr) {
-      let nm = (this.db-this.dt) * Math.abs(Math.tan(this.sang * Math.PI / 180) ); 
-      if ( nm  < this.sm * 1.5) 
+      let nm = (this.db-this.dt) * Math.abs(Math.tan(this.sang * Math.PI / 180) );
+      if ( nm  < this.sm * 1.5)
         this.dr = this.width - this.marg - this.sm * 1.5 + nm;
       else
         this.dr = this.width - this.marg;
     }
-    
-  }
-  
 
-  
-  dimm(rgba, div) { 
+  }
+
+
+
+  dimm(rgba, div) {
     let rgbamode = false;
     let res = "";
     if (typeof rgba == "undefined") return rgba;
@@ -123,15 +124,15 @@ class js_d7 {
     let str2 = str[0].split("(");
     let str3 = str[3 - !rgbamode].split(")");
     str[3] = "aaa" + ")";
-    if ( rgbamode ) 
-      res = str2[0] + "(" + str2[1] / div + "," + str[1] / div + "," + str[2] / div + "," + str3[0] + ")"
+    if ( rgbamode )
+      res = str2[0] + "(" + str2[1] / div + "," + str[1] / div + "," + str[2] / div + "," + str3[0] + ")";
     else
-      res = str2[0] + "(" + str2[1] / div + "," + str[1] / div + "," + str3[0] / div+ ")"
+      res = str2[0] + "(" + str2[1] / div + "," + str[1] / div + "," + str3[0] / div+ ")";
     return res;
   }
-  
-  
-  
+
+
+
   ovr_alarm() {
     var tmp = this.oncol;
     this.oncol = this.ovrcol;
@@ -139,9 +140,9 @@ class js_d7 {
     this.redraw();
     this.oncol = tmp;
   }
-  
-  
-  
+
+
+
   draw_segm(a, b, c, d, e, f, g, p) {
     let s = this;
     let p1  = { x:0, y:0};
@@ -159,19 +160,19 @@ class js_d7 {
     let p13 = { x:0, y:0};
     let p14 = { x:0, y:0};
     let p15 = { x:0, y:0};
-  
+
     if (this.pointspcorr) {
-      let nm = (this.db-this.dt) * Math.abs(Math.tan(this.sang * Math.PI / 180) ); 
-      if ( nm  < this.sm * 1.5) 
+      let nm = (this.db-this.dt) * Math.abs(Math.tan(this.sang * Math.PI / 180) );
+      if ( nm  < this.sm * 1.5)
         this.dr = this.width - this.marg - this.sm * 1.5 + nm;
       else
         this.dr = this.width - this.marg;
     }
-    
+
     function drawline(pf, pt, state) {
       s.ctx.save();
       s.ctx.beginPath();
-      s.ctx.lineCap = "round"; 
+      s.ctx.lineCap = "round";
       s.ctx.lineWidth = s.sw;
       if (state == true) {
         var col = s.oncol;
@@ -189,22 +190,22 @@ class js_d7 {
       s.ctx.closePath();
       s.ctx.restore();
     }
-    
-    
+
+
     function incX(p, inc) { return { x:p.x + inc, y:p.y }; }
     function incY(p, inc) { return { x:p.x, y:p.y + inc }; }
-    
+
     // display background
     this.ctx.fillStyle = this.backcol;
     this.ctx.lineWidth = 1;
     this.ctx.beginPath();
     this.ctx.rect(this.dl, this.dt, this.dh, this.dv);
     this.ctx.fill();
-    this.ctx.closePath();    
-       
+    this.ctx.closePath();
+
     if (this.sframe) {
       this.ctx.beginPath();
-      this.ctx.lineCap = "round"; 
+      this.ctx.lineCap = "round";
       this.ctx.lineWidth = 1;
       this.ctx.strokeStyle = "rgba(250,250,0,1)";
       this.ctx.fillStyle   = "rgba(250,250,0,1)";
@@ -225,12 +226,12 @@ class js_d7 {
     }
 
     // segments
-    let pr = Math.sqrt(Math.pow((this.dv - this.sm * 2 - this.sw * 2), 2) + Math.pow((this.dh - this.sm * 2 - this.sw * 1), 2) )
+    let pr = Math.sqrt(Math.pow((this.dv - this.sm * 2 - this.sw * 2), 2) + Math.pow((this.dh - this.sm * 2 - this.sw * 1), 2) );
     let hr = (pr) * Math.sin(this.sang * Math.PI / 180);
     let vr = (pr) * Math.cos(this.sang * Math.PI / 180);
     if (vr > this.dv - this.sm * 2 - this.sw * 2) vr = this.dv - this.sm * 2 - this.sw * 2;
     if (hr > this.dh - this.sm * 2 - this.sw * 1) hr = this.dh - this.sm * 2 - this.sw * 1;
-    
+
     p1.x = this.dl + this.sm + this.sw * 0.5;
     p1.y = this.db - this.sm - this.sw * 1;
     p2.x = this.dl + this.sm + hr / 2 + this.sw/2 - (this.sw*0.5 * Math.sin(this.sang * Math.PI / 180));
@@ -240,7 +241,7 @@ class js_d7 {
     p4.x = this.dl + this.sm + hr + this.sw*0.5;
     p4.y = this.db - this.sm - vr - this.sw;
     drawline(p1, p2, e);
-    drawline(p3, p4, f);   
+    drawline(p3, p4, f);
 
     let rc = this.dr - this.sm - this.sw*0.5;
     rc = rc - p4.x;
@@ -250,7 +251,7 @@ class js_d7 {
     p8 = incX(p4, rc);
     drawline(p5, p6, c);
     drawline(p7, p8, b);
-    
+
     p9  = incY(p1 ,  this.sw/2);
     p10 = incY(p5 ,  this.sw/2);
     p9  = incX(p9 ,  this.sw/2);
@@ -270,19 +271,19 @@ class js_d7 {
     p14 = incY(p8,  - this.sw/2);
     p13 = incX(p13,  this.sw/2);
     p14 = incX(p14, -this.sw/2);
-    if (p14.x < p13.x) { p13 = p4; p14 = p4 }
+    if (p14.x < p13.x) { p13 = p4; p14 = p4; }
     drawline(p13, p14, a);
-    
+
     p15.y = p10.y;
     p15.x = p10.x + this.sw * 1.5;
     drawline(p15, p15, p);
-    
+
     if (this.sang > this.sdivstop ) return;
-    
+
     if (this.sdiv) {
-      this.ctx.beginPath();    
+      this.ctx.beginPath();
       this.ctx.fillStyle= this.backcol;
-      
+
       this.ctx.moveTo(p5.x + this.sw/2, p10.y - this.sw/4);
       this.ctx.lineTo(p5.x - this.sw/4, this.db);
       this.ctx.lineTo(p5.x + this.sw/2, this.db);
@@ -294,7 +295,7 @@ class js_d7 {
       this.ctx.moveTo(p8.x + this.sw/2, p14.y + this.sw/4);
       this.ctx.lineTo(p8.x - this.sw/4, this.dt);
       this.ctx.lineTo(p8.x + this.sw/2, this.dt);
-      
+
       this.ctx.moveTo(p4.x - this.sw/2, p13.y + this.sw/4);
       this.ctx.lineTo(p4.x - this.sw/2, this.dt);
       this.ctx.lineTo(p4.x + this.sw/2, this.dt);
@@ -309,10 +310,10 @@ class js_d7 {
       this.ctx.lineTo( (p7.x - p6.x) / 2 + p6.x - this.sdivw / 2, p12.y );
 
       this.ctx.fill();
-      this.ctx.closePath();    
+      this.ctx.closePath();
 
-      this.ctx.beginPath();    
-      this.ctx.lineCap = "butt"; 
+      this.ctx.beginPath();
+      this.ctx.lineCap = "butt";
       this.ctx.lineWidth = this.sdivw;
       this.ctx.strokeStyle= this.backcol;
 
@@ -330,25 +331,25 @@ class js_d7 {
 
       this.ctx.stroke();
       this.ctx.fill();
-      this.ctx.closePath();    
+      this.ctx.closePath();
     }
-    
+
     if ((a==0) && (b==0) && (c==0) && (d==0) && (e==0) && (f==0) && (g==0) && (p==0))
       this.emty = true;
-    else 
+    else
       this.empty= false;
-      
+
   }
 
 
   draw(num, p) {
     if (typeof num == "undefined") return;
-    let a=0; 
-    let b=0; 
-    let c=0; 
-    let d=0; 
-    let e=0; 
-    let f=0; 
+    let a=0;
+    let b=0;
+    let c=0;
+    let d=0;
+    let e=0;
+    let f=0;
     let g=0;
     if (typeof num == "number") num = Math.floor(num);
     if (typeof num == "string"  ) { num = num.toLowerCase(); num =  num[0]; }
@@ -411,14 +412,14 @@ class js_d7 {
     this.draw(this.value, this.point);
   }
 
-  
+
   clear() {
     this.draw_segm(0, 0, 0, 0, 0, 0, 0, 0);
     this.value = -1;
     this.point = false;
     this.empty = true;
   }
-  
+
 }
 
 // ------------------------------- /one display --------------------------------------
@@ -432,24 +433,24 @@ class js_d7 {
 
 class js_display {
 
-  get height()  { 
+  get height()  {
     if ((typeof this.tbl == "undefined") || (this.tbl.length == 0) ) return 0;
-    return this.tbl[0].height; 
+    return this.tbl[0].height;
   }
 
-  get width ()  { 
+  get width ()  {
     if ((typeof this.tbl == "undefined") || (this.tbl.length == 0) ) return 0;
-    return this.tbl[0].width * this.tbl.length; 
+    return this.tbl[0].width * this.tbl.length;
   }
 
-  set sang  (a) { 
-      this.isang = a; 
+  set sang  (a) {
+      this.isang = a;
       for (let i = 0; i < this.tbl.length; i++)  this.tbl[i].sang = this.isang;
-      this.redraw(); 
+      this.redraw();
     }
   get sang  ()  { return this.isang; }
 
-  
+
   getcolbyname(col){
     if (col.includes("rgb")) return col;
     // colors by name
@@ -460,7 +461,7 @@ class js_display {
     this.yellowcol= { name: "yellow", col: this.yellow};
     this.cyancol  = { name: "cyan"  , col: this.cyan  };
     var colors = [this.blackcol, this.greencol, this.redcol, this.bluecol, this.yellowcol, this.cyancol];
-    for (let i=0; i < colors.length; i++) 
+    for (let i=0; i < colors.length; i++)
       if (col == colors[i].name) { col = colors[i].col; break; }
     return col;
   }
@@ -473,14 +474,14 @@ class js_display {
     this.blue    = "rgba(  0, 100, 255, 1)"; // std segment color blue   (const)
     this.yellow  = "rgba(255, 255,   0, 1)"; // std segment color yellow (const)
     this.cyan    = "rgba(  0, 255, 255, 1)"; // std segment color yellow (const)
-    
+
     // check colors
     if (typeof oncol   != "undefined") oncol   = this.getcolbyname(oncol  );
     if (typeof ovrcol  != "undefined") ovrcol  = this.getcolbyname(ovrcol );
     if (typeof backcol != "undefined") backcol = this.getcolbyname(backcol);
 
     this.removeleadingzeros = true;
-    
+
     if (typeof cnt == "undefined") cnt = 1;
     this.tbl = [];
     // new all displays
@@ -494,9 +495,9 @@ class js_display {
     con.style.width  = this.width;
     con.style.height = this.height;
   }
-  
 
-  
+
+
   // for all display color change
   color(oncol, ovrcol, backcol) {
     let ovr = false;
@@ -509,7 +510,7 @@ class js_display {
     if (typeof oncol   != "undefined") oncol   = this.getcolbyname(oncol  );
     if (typeof ovrcol  != "undefined") ovrcol  = this.getcolbyname(ovrcol );
     if (typeof backcol != "undefined") backcol = this.getcolbyname(backcol);
-    
+
     for (let i = 0; i < this.tbl.length; i++) {
       this.tbl[i].oncol   = oncol  ;
       if (ovr) this.tbl[i].ovrcol  = ovrcol ;
@@ -517,26 +518,26 @@ class js_display {
     }
     this.redraw();
   }
- 
- 
- 
+
+
+
   clear() {
     for (let i=0; i < (this.tbl.length - 1); i++) {
       this.tbl[i].clear();
     }
   }
-  
-  
- 
+
+
+
   // draw fixed-point number
   draw_num(num, p) {
     let w = 1;
     let c = 0;
     let d = false;
-    let minus = num < 0; 
+    let minus = num < 0;
     num = Math.abs(Math.floor(num));
-        
-/*    
+
+/*
     // draw number 0.00 (room for number)
     if (p >= 0 ) {
       let first = false;
@@ -546,33 +547,33 @@ class js_display {
         if (first) break;
       }
     }
-*/    
+*/
     // draw numbers
     for (let i=(this.tbl.length - 1); i >= 0; i--) {
       w *= 10;
       c = Math.floor( num % w / (w / 10 ) );
       d = (p > 0) && (p == this.tbl.length - i- 1);
-      this.tbl[i].draw(c, d); 
+      this.tbl[i].draw(c, d);
     }
-    
+
     // remove leading zeros
     if (this.removeleadingzeros) {
       for (let i=0; i < (this.tbl.length - 1); i++) {
         if ( (this.tbl[i].value == 0) && (this.tbl[i].point == false) ) this.tbl[i].clear(); else break;
       }
     }
-    
+
     // minus
     if (minus) {
       let pos = this.tbl.length - 1;
-      for (let i=(this.tbl.length - 1); i >= 0; i--) 
+      for (let i=(this.tbl.length - 1); i >= 0; i--)
         if (!this.tbl[i].empty) pos--; else break;
-        if (pos>=0) this.tbl[pos].draw('-', d);     
+        if (pos>=0) this.tbl[pos].draw('-', d);
     }
-    
+
     // overflow alarm
-    if ( (num.toString().length + (1 * minus) ) > this.tbl.length) this.tbl[0].ovr_alarm(); 
-    
+    if ( (num.toString().length + (1 * minus) ) > this.tbl.length) this.tbl[0].ovr_alarm();
+
   }
 
 
@@ -581,7 +582,7 @@ class js_display {
     //let p = 2;
     //let sn = num.toLocaleString(undefined, {useGrouping: false, minimumFractionDigits:p, maximumFractionDigits:p });
     let sn = num.toString();
-    
+
     // overflow alarm test
     let point = 0;
     if ( sn.includes(".") || sn.includes(",") ) point = 1;
@@ -592,8 +593,8 @@ class js_display {
     this.draw_str(sn); // draw raw string
     if ( ovralarm ) this.tbl[0].ovr_alarm(); // show error
   }
-  
-  
+
+
   // draw raw string (without control)
   draw_str(s) {
     var c = '';
@@ -602,7 +603,7 @@ class js_display {
     for (let i=0; i < this.tbl.length; i++) {
       if (i < s.length) c = s[i + wp]; else c = -1;
       if ( (wp == 0) && (i + 1 < s.length) ) { p = (s[i + 1] == '.') || (s[i + 1] == ','); if (p) wp = 1; }
-      this.tbl[i].draw(c, p); 
+      this.tbl[i].draw(c, p);
       p = false;
     }
   }
@@ -612,8 +613,7 @@ class js_display {
   redraw() {
     for (let i=0; i < this.tbl.length; i++) { this.tbl[i].redraw(); }
   }
-  
+
 }
 
 // ------------------------------- /all display --------------------------------------
-
