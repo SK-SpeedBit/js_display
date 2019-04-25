@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
-
+ 
 /*
-    ------------------------   js_display  ----------------------------
+    ---------------------   js_display ver. 1.2 ------------------------
       (c) 2019 SpeedBit, reg. Czestochowa, Poland
     --------------------------------------------------------------------
     This program is free software: you can redistribute it and/or modify
