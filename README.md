@@ -21,3 +21,7 @@
 ![7d_4](https://user-images.githubusercontent.com/33321284/56794141-d3df4880-680d-11e9-9142-6ee6de68ddd4.png)
 
 ![7d_5](https://user-images.githubusercontent.com/33321284/56794163-df327400-680d-11e9-8915-4880c8f98cd1.png)
+
+
+###  Is compatible with FireFox, Opera, Chrome. Tested in Firefox on Android 6.0 too. 
+###  Does not work with IE and Safari (also due to lack of class support) :-(
