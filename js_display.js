@@ -1,8 +1,8 @@
 /* jshint esversion: 6 */
- 
+
 /*
-    ---------------------   js_display ver. 1.2 ------------------------
-      (c) 2019 SpeedBit, reg. Czestochowa, Poland
+    ---------------------   js_display ver. 1.3  -----------------------
+      (c) 2019-2021 SpeedBit, reg. Czestochowa, Poland
     --------------------------------------------------------------------
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,10 +30,12 @@ class js_d7 {
   set oncol (c) { this.ioncol  = c; this.offcol  = this.dimm(this.oncol, this.dimdiv); }
   set sang  (a) { this.isang=a; this.redraw(); }
   get sang  ()  { return this.isang; }
+  set dimdiv(a) { this.idimdiv = a; this.offcol  = this.dimm(this.oncol, this.dimdiv); }
+  get dimdiv()  { return this.idimdiv; }
 
   constructor (container, hsize, oncol, ovrcol, backcol) {
     this.marg   =  0;  // margin of display
-    this.dimdiv =  6;
+    this.idimdiv =  6;
     this.prop = 12/17; // proportions of display
     this.isang=  8;    // angle of display
     this.sw   =  6;    // segment width
@@ -58,6 +60,8 @@ class js_d7 {
     this.offcol  = this.dimm(this.oncol, this.dimdiv); // segment off color (auto calculated)
 
     this.canvas = document.createElement("canvas"); this.canvas.id = "canvas";
+    this.canvas.height = hsize;
+    this.canvas.width  = hsize * this.prop;
     document.getElementById(container).appendChild(this.canvas);
     this.ctx    = this.canvas.getContext("2d");
 
@@ -89,7 +93,7 @@ class js_d7 {
     let ma = Math.atan(this.width / this.height) * 180 / Math.PI;
     this.sdivstop = ma/2;     // segment divider angle stop
 
-    this.sw = this.height / 11;
+    this.sw    = this.height / 11;
     this.sdivw = this.sw / 2;
     this.sm    = this.sw / 2;
 
@@ -491,34 +495,44 @@ class js_display {
       this.tbl[i].draw(-1, 0);
     }
     // set display size
-    var con = document.getElementById(container);
-    con.style.width  = this.width;
-    con.style.height = this.height;
+    this.ctx = document.getElementById(container);
+    this.ctx.style.width  = this.width;
+    this.ctx.style.height = this.height;
   }
 
 
 
   // for all display color change
-  color(oncol, ovrcol, backcol) {
+  color(oncol, ovrcol, backcol, offcol) {
     let ovr = false;
     let bck = false;
+    let off = false;
     if (typeof oncol   == "undefined") return -1;
-    if (typeof ovrcol  != "undefined") ovr = true;
-    if (typeof backcol != "undefined") bck = true;
+    if ((typeof ovrcol  != "undefined") && (ovrcol  != null)) ovr = true;
+    if ((typeof backcol != "undefined") && (backcol != null)) bck = true;
+    if ((typeof offcol  != "undefined") && (offcol  != null)) off = true;
 
     // check colors
-    if (typeof oncol   != "undefined") oncol   = this.getcolbyname(oncol  );
-    if (typeof ovrcol  != "undefined") ovrcol  = this.getcolbyname(ovrcol );
-    if (typeof backcol != "undefined") backcol = this.getcolbyname(backcol);
+    oncol   = this.getcolbyname(oncol  );
+    if (ovr) ovrcol  = this.getcolbyname(ovrcol );
+    if (bck) backcol = this.getcolbyname(backcol);
+    if (off) offcol  = this.getcolbyname(offcol );
 
     for (let i = 0; i < this.tbl.length; i++) {
       this.tbl[i].oncol   = oncol  ;
       if (ovr) this.tbl[i].ovrcol  = ovrcol ;
       if (bck) this.tbl[i].backcol = backcol;
+      if (off) this.tbl[i].offcol  = offcol ;
     }
     this.redraw();
   }
 
+  // for all display color change
+  dim(newdim) {
+    for (let i = 0; i < this.tbl.length; i++) {
+      this.tbl[i].dimdiv = newdim;
+    }
+  }
 
 
   clear() {
@@ -531,12 +545,12 @@ class js_display {
 
   // draw fixed-point number
   draw_num(num, p) {
+    if (p>0) num *= Math.pow(10, p);
     let w = 1;
     let c = 0;
     let d = false;
     let minus = num < 0;
     num = Math.abs(Math.floor(num));
-
 /*
     // draw number 0.00 (room for number)
     if (p >= 0 ) {
@@ -572,7 +586,7 @@ class js_display {
     }
 
     // overflow alarm
-    if ( (num.toString().length + (1 * minus) ) > this.tbl.length) this.tbl[0].ovr_alarm();
+    if ( (num.toString().length + (1 * minus) ) > this.tbl.length) if (this.tbl.length>0) this.tbl[0].ovr_alarm();
 
   }
 
@@ -600,10 +614,14 @@ class js_display {
     var c = '';
     var p = 0;
     var wp = 0;
+    var ind = 0;
     for (let i=0; i < this.tbl.length; i++) {
-      if (i < s.length) c = s[i + wp]; else c = -1;
-      if ( (wp == 0) && (i + 1 < s.length) ) { p = (s[i + 1] == '.') || (s[i + 1] == ','); if (p) wp = 1; }
+      if (ind < s.length) c = s[ind]; else c = -1;
+      //if ( (wp == 0) && (i + 1 < s.length) ) { p = (s[i + 1] == '.') || (s[i + 1] == ','); if (p) wp = 1; }
+      if ( (ind + 1 < s.length)  && ( ( s[ind + 1] == '.') || ( s[ind + 1] == ',') ) ) p = 1; else p=0;
       this.tbl[i].draw(c, p);
+      // all dots...
+      ind++; if (p) ind++;
       p = false;
     }
   }
